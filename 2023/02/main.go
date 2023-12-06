@@ -1,13 +1,13 @@
 package main
 
 import (
-  "bufio"
-  "fmt"
-  "log"
-  "os"
+	"bufio"
+	"fmt"
+	"log"
+	"os"
 	"regexp"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 		"blue":  14,
 		"green": 13,
 		"red":   12,
-	} 
+	}
 )
 
 func GetGameNumber(line string) string {
@@ -23,42 +23,48 @@ func GetGameNumber(line string) string {
 	return re.FindStringSubmatch(line)[1]
 }
 
-func IsGamePossible(line string) (string, bool) {
-	gameNumber := GetGameNumber(line)
-	 
+func IsGamePossible(line string) (int, bool) {
+	gameNumber, _ := strconv.Atoi(GetGameNumber(line))
+
 	splitRegexp := regexp.MustCompile(`[\p{P}]`)
 	cubes := splitRegexp.Split(line, -1)
 
 	for _, draw := range cubes[1:] {
 		drawResult := strings.Split(draw, " ")
-		drawCount, err := strconv.Atoi(strings.Trim(drawResult[0], " "))
+		drawCount, err := strconv.Atoi(strings.Trim(drawResult[1], " "))
 		if err != nil {
 			log.Fatal(err)
 		}
-		if drawCount > MAX_CUBES[drawResult[1]] {
-		  return gameNumber, false
+		if drawCount > MAX_CUBES[drawResult[2]] {
+			return gameNumber, false
 		}
 	}
 	return gameNumber, true
-		
+
 }
 
-
 func main() {
-  file, err := os.Open("example.txt")
-  if err != nil {
-    log.Fatal(err)
-  }
-  defer file.Close()
+	file, err := os.Open("input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
-  scanner := bufio.NewScanner(file)
-  for scanner.Scan() {
-    fmt.Println(IsGamePossible(scanner.Text()))
-  }
+	tally := 0
 
-  if err := scanner.Err(); err != nil {
-    log.Fatal(err)
-  }
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		gameCount, feasible := IsGamePossible(scanner.Text())
+		if feasible {
+			fmt.Println(scanner.Text())
+			tally += gameCount
+		}
+		
+	}
 
-  //fmt.Println("Final Total: ", totalCount)
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Final Total: ", tally)
 }
