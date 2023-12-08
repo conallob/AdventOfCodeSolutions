@@ -10,20 +10,18 @@ import (
 	"strings"
 )
 
-var (
-	MAX_CUBES = map[string]int{
-		"blue":  14,
-		"green": 13,
-		"red":   12,
-	}
-)
+func CubesPower(cubes map[string]int) int {
+	out := (cubes["red"] * cubes["green"] * cubes["blue"])
+	fmt.Println(out)
+	return out
+}
 
 func GetGameNumber(line string) string {
 	re := regexp.MustCompile(`(\d+):`)
 	return re.FindStringSubmatch(line)[1]
 }
 
-func IsGamePossible(line string) (int, bool) {
+func IsGamePossible(line string, max_cubes map[string]int) (int, bool) {
 	gameNumber, _ := strconv.Atoi(GetGameNumber(line))
 
 	splitRegexp := regexp.MustCompile(`[\p{P}]`)
@@ -35,9 +33,10 @@ func IsGamePossible(line string) (int, bool) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if drawCount > MAX_CUBES[drawResult[2]] {
-			return gameNumber, false
+		if drawCount > max_cubes[drawResult[2]] {
+			max_cubes[drawResult[2]] = drawCount
 		}
+
 	}
 	return gameNumber, true
 
@@ -51,15 +50,21 @@ func main() {
 	defer file.Close()
 
 	tally := 0
-
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		gameCount, feasible := IsGamePossible(scanner.Text())
-		if feasible {
-			fmt.Println(scanner.Text())
-			tally += gameCount
+		max_cubes := map[string]int{
+			"blue":  1,
+			"green": 1,
+			"red":   1,
 		}
-		
+
+		gameDetails := scanner.Text()
+		_, feasible := IsGamePossible(gameDetails, max_cubes)
+		if feasible {
+			fmt.Println(scanner.Text(), " - ", max_cubes)
+			tally += CubesPower(max_cubes)
+		}
+
 	}
 
 	if err := scanner.Err(); err != nil {
