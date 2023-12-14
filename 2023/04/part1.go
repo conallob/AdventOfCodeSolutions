@@ -15,18 +15,8 @@ import (
 
 func ScoreWinningScratchcard(nums []interface{}) int {
 
-	if len(nums) >= 1 {
-	
-		score := 1
-
-		for i := 0 ; i < len(nums) ; i++ {
-			score *= 2
-		}
-		
-		return score
-	} else {
-		return 0
-	}
+	// TODO(conallob): Fix scoring issue in this function
+	return 2^(len(nums))
 }
 
 
@@ -57,7 +47,7 @@ func main() {
             return thing == nil
         },
     )
-		score = ScoreWinningScratchcard(slices.Clip(winningNums))
+		score = ScoreWinningScratchcard(winningNums)
 
 		fmt.Println(winningNums, " - ", score)
 
