@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"regexp"
-	"slices"
 	"strings"
 
 	"github.com/juliangruber/go-intersect"
@@ -15,13 +15,27 @@ import (
 
 func ScoreWinningScratchcard(nums []interface{}) int {
 
-	// TODO(conallob): Fix scoring issue in this function
-	return 2^(len(nums))
+	var sanitisedNums []interface{}
+
+	// Filter out nil values
+	for _, a := range nums {
+		if ((a == "") || (a == nil) || (a == " ")) {
+			continue
+		} else {
+			sanitisedNums = append(sanitisedNums, a)
+		}
+	}
+
+	if len(sanitisedNums) == 1 {
+		return 1
+	} else {
+		return int(math.Pow(2, float64(len(sanitisedNums) -1)))
+	}
 }
 
 
 func main() {
-	file, err := os.Open("example-part1.txt")
+	file, err := os.Open("input.txt")
 
 	if err != nil {
 		log.Fatal(err)
@@ -29,30 +43,21 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-  re := regexp.MustCompile(`[[:punct:]]`)
+  	re := regexp.MustCompile(`[[:punct:]]`)
 
 	tally := 0
-	score := 0
 
 	for scanner.Scan() {
   	parsed := re.Split(scanner.Text(), -1)
-		score = 0
+		score := 0
 
 		winners := strings.Split(parsed[1], " ")
 		scratchcard := strings.Split(parsed[2], " ")
 
-		winningNums := slices.DeleteFunc(
-        intersect.Simple(winners, scratchcard),
-        func(thing interface{}) bool {
-            return thing == nil
-        },
-    )
+		winningNums := intersect.Simple(winners, scratchcard)
 		score = ScoreWinningScratchcard(winningNums)
 
-		fmt.Println(winningNums, " - ", score)
-
 		tally += score
-
 	}
 
 	if err := scanner.Err(); err != nil {
