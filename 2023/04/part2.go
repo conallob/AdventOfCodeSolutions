@@ -7,27 +7,30 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"strconv"
 
 	"github.com/juliangruber/go-intersect"
 )
 
 
-func ParseCardNum(card string) string {
+func FindAllWinningCards(start int) 
+
+func ParseCardNum(card string) int {
 	out := strings.TrimSuffix(strings.TrimPrefix(card, "Card "), ":")
-	return strings.TrimSpace(out)
+	outAsInt, _ := strconv.Atoi(strings.TrimSpace(out))
+	return outAsInt
 }
 
-func SanitizeWinningScratchcard(nums []interface{}) ([]string, error) {
-
-	out := []string{}
+func SanitizeWinningScratchcard(nums []interface{}) ([]int, error) {
+	out := []int{}
 
 	// Filter out nil values
 	for _, a := range nums {
 		if ((a == "") || (a == nil) || (a == " ")) {
 			continue
 		} else {
-			// TODO(conallob): Convert to int, allowing to walk a winning chain
-			out = append(out, fmt.Sprintf("%v", a))
+			AAsInt, _ := strconv.Atoi(fmt.Sprintf("%v", a))
+			out = append(out, AAsInt)
 		}
 	}
 
@@ -36,12 +39,11 @@ func SanitizeWinningScratchcard(nums []interface{}) ([]string, error) {
 	} else {
 		return out, nil
 	}
-
 }
 
 
 func main() {
-	file, err := os.Open("input.txt")
+	file, err := os.Open("example-part1.txt")
 
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +52,7 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
  	re := regexp.MustCompile(`[[:punct:]]`)
-	ScrtchCardSet := map[string][]string{}
+	ScrtchCardSet := map[int][]int{}
 
 	for scanner.Scan() {
   	parsed := re.Split(scanner.Text(), -1)
@@ -61,14 +63,18 @@ func main() {
 		winningNums := intersect.Simple(winners, scratchcard)
 
 		ScrtchCardSet[card], _ = SanitizeWinningScratchcard(winningNums)
-
-
 	}
-
-	fmt.Println(ScrtchCardSet)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	totalCards := len(ScrtchCardSet)
+
+	for _, game := range ScratchCardSet ; game != [] {
+		totalCards += len(
+		
+	}
+	
 
 }
