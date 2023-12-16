@@ -13,7 +13,15 @@ import (
 )
 
 
-func FindAllWinningCards(start int) 
+func FindAllWinningCards(currentCard int, deck map[int][]int, *winningsPot []int) {
+	result := deck[currentCard]
+	if len(result) > 0 {
+		&winningsPot = append(&winningsPot, result...)
+	} else {
+		return 
+	}
+}
+
 
 func ParseCardNum(card string) int {
 	out := strings.TrimSuffix(strings.TrimPrefix(card, "Card "), ":")
@@ -73,7 +81,6 @@ func main() {
 
 	for _, game := range ScratchCardSet ; game != [] {
 		totalCards += len(
-		
 	}
 	
 
