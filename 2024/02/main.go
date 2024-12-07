@@ -71,29 +71,25 @@ func IsSafeReport(report []int) bool {
 }
 
 func IsPartiallySafeReport(report []int) bool {
-	/* TODO(conallob): Debug why this function isn't
-	   working as intended
-	*/
-	subtotal := 0
-
-	fmt.Println("Report: ", report)
-	i := 0
-	permutation := make([]int, len(report)-1)
-	for i < len(report) {
-		if i == 0 {
-			permutation = report[1:]
-		} else if i == len(report)-1 {
-			permutation = report[:len(report)-1]
-		} else {
-			permutation = append(report[:i], report[i+1:]...)
+	for i := 0; i < len(report); i++ {
+		permutation := append(report[:i], report[i+1:]...)
+		if NumDuplicates(permutation) < 2 && IsSafeReport(permutation) {
+			return true
 		}
-		fmt.Println(permutation)
-		if IsSafeReport(permutation) {
-			subtotal++
-		}
-		i++
 	}
-	return (len(report) - subtotal) == 1
+	return false
+}
+
+func NumDuplicates(report []int) int {
+	duplicates := make(map[int]bool)
+	counts := 0
+	for _, num := range report {
+		if duplicates[num] {
+			counts++
+		}
+		duplicates[num] = true
+	}
+	return counts
 }
 
 func abs(i int) int {
@@ -102,15 +98,3 @@ func abs(i int) int {
 	}
 	return i
 }
-
-/*
-	if !slices.IsSorted(report) || !IsDecreasing(report) {
-		return false
-	}
-...
-func IsDecreasing(report []int) bool {
-	return slices.IsSortedFunc(report, func(a, b int) int {
-		return cmp.Compare(b, a)
-	})
-}
-*/
