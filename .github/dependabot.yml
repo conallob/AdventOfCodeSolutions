@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: "gomod"
+    directory: "/2023/04"
+    schedule:
+      interval: "weekly"
